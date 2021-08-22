@@ -18,6 +18,7 @@ package cmd
 import (
 	"fmt"
 	"os/exec"
+	"strconv"
 
 	"github.com/spf13/cobra"
 )
@@ -27,7 +28,7 @@ var scriptWithErrorCmd = &cobra.Command{
 	Use:   "scriptWithError",
 	Short: "Execute script with an exit error",
 	Run: func(cmd *cobra.Command, args []string) {
-		command := exec.Command("./exit-error.sh", "25")
+		command := exec.Command("./exit-error.sh", strconv.Itoa(desiredExitCode))
 		if err := command.Run(); err != nil {
 			if exitError, ok := err.(*exec.ExitError); ok {
 				exitCode := exitError.ExitCode()
@@ -36,6 +37,8 @@ var scriptWithErrorCmd = &cobra.Command{
 		}
 	},
 }
+
+var desiredExitCode int
 
 func init() {
 	rootCmd.AddCommand(scriptWithErrorCmd)
@@ -49,4 +52,7 @@ func init() {
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
 	// scriptWithErrorCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+
+	scriptWithErrorCmd.Flags().IntVarP(&desiredExitCode, "exit-code", "e", 18, "desired exit code for the script")
+
 }
